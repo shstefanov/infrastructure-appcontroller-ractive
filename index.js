@@ -2,8 +2,6 @@ var _            = require("underscore");
 var helpers      = require("lib.helpers"); 
 var Controller   = require("lib.Controller");
 var Router       = require("lib.Router");
-// var WebsocketApp = require("lib.WebsocketApp");
-
 
 /*
   // Every controller can:
@@ -44,18 +42,10 @@ module.exports = Controller.extend("BaseRactiveAppController", {
     this.options  = options;
     this.config   = options.config;
     this.settings = options.settings;
-    this.routes   = options.routes;
-
 
     this.setupRouter(options);
 
     helpers.chain([
-
-      function(cb){
-        return cb();
-        if(this.settings && this.settings.sockets) this.setupSockets(this.settings.sockets, cb);
-        else cb();
-      },
 
       function(cb){
         if(this.Layout){
@@ -63,7 +53,6 @@ module.exports = Controller.extend("BaseRactiveAppController", {
           var element;
           if(!container) element = document.body;
           else           element = document.querySelector(container);
-
           var self = this;
           this.layout = new (this.Layout)({
             data: options.data,
@@ -72,8 +61,7 @@ module.exports = Controller.extend("BaseRactiveAppController", {
           });
 
         }
-        else cb();
-        
+        else cb();  
       },
 
       function(cb){ this.setupControllers(cb); },
@@ -89,36 +77,6 @@ module.exports = Controller.extend("BaseRactiveAppController", {
 
   },
 
-  // setupSockets: function(sockets, cb){
-  //   var io = require("socket.io-client");
-    
-  //   helpers.amap(sockets, [
-  //     function(settings, cb){
-  //       var socket = io.connect([settings.protocol, settings.host, ":", settings.port, "?", settings.query].join(""),  settings);
-  //       socket.once("connect", function(){
-  //         cb( null, socket, settings );
-  //       });
-  //     },
-
-  //     function(socket, settings, cb){
-  //       socket.once("init", function(initData){
-  //         cb( null, socket, settings, initData );
-  //       });
-  //     },
-
-  //     function(socket, settings, initData, cb){
-  //       cb(null, new WebsocketApp(socket, settings, initData));
-  //     },
-
-  //     ], function(err, socket_apps){   if(err) return cb(err);
-  //     var sockets  = require("sockets");
-  //     this.sockets = sockets;
-  //     window.sockets = sockets;
-  //     _.extend( sockets, socket_apps );
-  //     cb();
-  //   });
-  // },
-
   setupRouter: function(options){
     this.router = new Router(options.routes);
   },
@@ -129,6 +87,8 @@ module.exports = Controller.extend("BaseRactiveAppController", {
     var observers  = [];
     var data       = this.options.data;
     var config     = this.config;
+
+    this.routes && this.bindRoutes(this);
 
     if(this.data) _.extend(data, this.data );
 
@@ -147,8 +107,9 @@ module.exports = Controller.extend("BaseRactiveAppController", {
         }
       }
 
-      if(controllerPrototype.prototype.data) _.extend(data, controllerPrototype.prototype.data );
+      if(controllerPrototype.prototype.data) self.set(controllerPrototype.prototype.data );
       var controller = self[controllerName] = new controllerPrototype();
+      controller.routes && controller.bindRoutes(self);
       controller.app = self;
       if(controller.observe && self.bindObserver){
         observers.push(controller);
