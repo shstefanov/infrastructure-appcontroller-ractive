@@ -6,10 +6,5 @@
     "name": "Stefan Stefanov",
     "email": "s.h.stefanov@mail.bg"
   },
-  "dependencies": {
-    "bulkify": "latest",
-    "source-map-loader": "^0.1.5",
-    "transform-loader": "^0.2.3",
-    "underscore": "^1.8.3"
-  }
+  "dependencies": {}
 }
