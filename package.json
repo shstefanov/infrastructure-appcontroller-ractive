@@ -1,5 +1,5 @@
 {
-  "name": "infrastructure-client-appcontroller-ractive",
+  "name": "infrastructure-appcontroller-ractive",
   "version": "0.0.1",
   "private": false,
   "author": {
@@ -7,7 +7,7 @@
     "email": "s.h.stefanov@mail.bg"
   },
   "dependencies": {
-    "source-map-loader": "^0.1.5",
-    "transform-loader": "^0.2.3"
+    "underscore": "latest",
+    "infrastructure": "git+https://github.com/shstefanov/infrastructure.git#dev"
   }
 }

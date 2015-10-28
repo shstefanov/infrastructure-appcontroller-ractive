@@ -1,7 +1,7 @@
 var _            = require("underscore");
-var helpers      = require("lib.helpers"); 
-var Controller   = require("lib.Controller");
-var Router       = require("lib.Router");
+var helpers      = require("infrastructure/lib/helpers"); 
+var Controller   = require("infrastructure/lib/client/Controller");
+var Router       = require("infrastructure/lib/client/Router");
 
 /*
   // Every controller can:
