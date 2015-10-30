@@ -49,7 +49,7 @@ module.exports = Controller.extend("BaseRactiveAppController", {
 
       function(cb){
         if(this.Layout){
-          var container = config.container;
+          var container = app_config.container;
           var element;
           if(!container) element = document.body;
           else           element = document.querySelector(container);
