@@ -1,7 +1,7 @@
 var _            = require("underscore");
 var helpers      = require("infrastructure/lib/helpers"); 
 var Controller   = require("infrastructure/lib/client/Controller");
-var Router       = require("infrastructure/lib/client/Router");
+var Router       = require("./Router");
 
 /*
   // Every controller can:
@@ -68,7 +68,7 @@ module.exports = Controller.extend("BaseRactiveAppController", {
 
       function(cb){
         this.router.bindRoutes(this.routes);
-        this.router.startHistory();
+        this.router.startHistory(app_config.pushState);
         this.trigger("ready");
         cb();
       }
