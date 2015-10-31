@@ -13,10 +13,9 @@ module.exports = Ractive.extend({
     },
 
     resolveComponent: function(name, properties){
-      if(this.partials[name]) {
-        if(properties) this.bindComponentVars(this.partials[name], properties );
-        return name;
-      }
+      
+      if(this.partials[name]) return name;
+
       var component, partial, components = this.__proto__.constructor.components;
       try{
         if(!components[name]) throw new Error("Component not found");
@@ -25,7 +24,7 @@ module.exports = Ractive.extend({
         if(properties) this.bindComponentVars(partial, properties );
       }
       catch(err){
-        this.partials[name] = {"v":3,"t":[{"t":7,"e":"p","a":{"class":"alert alert-danger"},"f":["Error: Component at '"+name+"'' can't be resolved"]}]};
+        this.partials[name] = {"v":3,"t":[{"t":7,"e":"p","a":{"class":"alert alert-danger"},"f":["Error: Component '"+name+"'' can't be resolved"]}]};
       }
       return name;
     }
