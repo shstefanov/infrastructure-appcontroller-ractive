@@ -43,9 +43,17 @@ module.exports = Controller.extend("BaseRactiveAppController", {
     this.config   = options.config;
     this.settings = options.settings;
 
-    this.setupRouter(options);
+    // this.setupRouter(options);
 
     helpers.chain([
+
+      function(cb){
+        if(options.routes){
+          this.setupRouter(options.routes, app_config);
+          cb();
+        }
+        else cb();
+      },
 
       function(cb){
         if(this.Layout){
@@ -67,8 +75,10 @@ module.exports = Controller.extend("BaseRactiveAppController", {
       function(cb){ this.setupControllers(cb); },
 
       function(cb){
-        this.router.bindRoutes(this.routes);
-        this.router.startHistory(app_config.pushState);
+        if(options.routes){
+          this.router.bindRoutes(this.routes);
+          this.router.startHistory(app_config.pushState);          
+        }
         this.trigger("ready");
         cb();
       }
@@ -77,8 +87,8 @@ module.exports = Controller.extend("BaseRactiveAppController", {
 
   },
 
-  setupRouter: function(options){
-    this.router = new Router(options.routes);
+  setupRouter: function(routes, app_config){
+    this.router = new Router(routes, app_config);
   },
 
   setupControllers: function(cb){

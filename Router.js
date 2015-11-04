@@ -4,20 +4,22 @@
 var Backbone               = require("backbone");
 var Class                  = require("infrastructure/lib/Class");
 
-var jQueryMockup = {
-  on: function(event, handler){
-    this.el.addEventListener(event, handler);
-    return jQueryMockup;
-  },
-  off: function(event, handler){
-    this.el.removeEventListener(event, handler);
-    return jQueryMockup;
-  }
-};
+if(!Backbone.$){
+  var jQueryMockup = {
+    on: function(event, handler){
+      this.el.addEventListener(event, handler);
+      return jQueryMockup;
+    },
+    off: function(event, handler){
+      this.el.removeEventListener(event, handler);
+      return jQueryMockup;
+    }
+  };
 
-Backbone.$ = function(el){
-  jQueryMockup.el = el;
-  return jQueryMockup;
+  Backbone.$ = function(el){
+    jQueryMockup.el = el;
+    return jQueryMockup;
+  }  
 }
 
 function getLink(elem){
@@ -30,7 +32,7 @@ function getHref(elem, rootPath){
   if(!elem || !elem.href) return false;
   var href = elem.getAttribute("href");
   if( href.indexOf( "/" ) === 0 ){
-    if( href.indexOf(rootPath) === 0 ) return href.replace(/^\//, "");
+    if( href.indexOf(rootPath) === 0 ) return href;
     else return false;
   }
   else if( href.indexOf( "javascript:" ) === -1 ) return rootPath + "/" + href;
@@ -39,24 +41,38 @@ function getHref(elem, rootPath){
 
 var BaseRouter = Backbone.Router.extend({
   
-  initialize: function(routes){
+  initialize: function(routes, options){
+
     this.routes = routes;
-    var config  = require("config");
+    this.options = options || {};
+    var pushState = this.options.pushState;
+
     var router  = this;
-    var rootPath = document.getElementsByTagName("base")[0].href.replace(window.location.origin, ""); //config.router.base_path || "";
-    this.rootPath = rootPath.replace(/^\/+/, "");
-    document.body.addEventListener("click", function(e){
-      var href = getHref(getLink(e.target), rootPath);
-      if(href) {
-        e.preventDefault();
-        router.navigate(href, true);
-      }
-    });
+    var rootPath = document.getElementsByTagName("base")[0].href.replace(window.location.origin, "");
+    this.rootPath = rootPath;
+    if(pushState){
+      document.body.addEventListener("click", function(e){
+        var href = getHref(getLink(e.target), rootPath);
+        if(href) {
+          e.preventDefault();
+          router.navigate(href.replace(/^\//, ""), true);
+        }
+      });
+    }
+    else{
+      document.body.addEventListener("click", function(e){
+        var href = getHref(getLink(e.target), rootPath);
+        if(href) {
+          if(href.indexOf(rootPath) === 0) href = href.replace(rootPath, "").replace(/^\//, ""); // strip rootPath from href
+          e.preventDefault();
+          router.navigate(href, true);
+        }
+      });
+    }
   },
 
-  startHistory: function(pushState){
-    this.pushState = pushState;
-    Backbone.history.start({pushState: pushState});
+  startHistory: function(){
+    Backbone.history.start({pushState: this.options.pushState});
   },
 
   back: function(n){
@@ -65,15 +81,21 @@ var BaseRouter = Backbone.Router.extend({
 
   bindRoutes: function(){
     var rootPath = this.rootPath;
+    var rootPrefix;
+    if(this.options.pushState){
+      rootPrefix = rootPath.replace(/^\//, "");
+    }
+    else rootPrefix = "";
+
     for(var routePath in this.routes){
       var routeName = this.routes[routePath];
       if(Array.isArray(routeName)){
         for(var i=0;i<routeName.length;i++){
-          this.route((rootPath+"/"+routePath).replace(/^\/+/,"").replace(/\/+$/,"").replace(/\/+/,"/"), routeName[i]);
+          this.route((rootPrefix+routePath).replace(/^\/+/,"").replace(/\/+$/,"").replace(/\/+/,"/"), routeName[i]);
         }
       }
       else{
-        this.route((rootPath+"/"+routePath).replace(/^\/+/,"").replace(/\/+$/,"").replace(/\/+/,"/"), routeName);
+        this.route((rootPrefix+routePath).replace(/^\/+/,"").replace(/\/+$/,"").replace(/\/+/,"/"), routeName);
       }
     }
   }

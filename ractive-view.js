@@ -79,11 +79,12 @@ module.exports = Ractive.extend({
     return result;
   },
 
-  radioToggle: function(path){
+  radioToggle: function(path, exclusive){
     var parts      = path.split(".");
     var parentPath = parts.slice(0,-1).join(".");
     var target     = parts.slice(-1).pop();
     var active     = this.get(parentPath+".__active");
+    if(exclusive && target === active) return;
     if(active){
       this.toggle(parentPath+"."+active);
     }
