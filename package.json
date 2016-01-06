@@ -1,7 +1,10 @@
 {
   "name": "infrastructure-appcontroller-ractive",
   "version": "0.1.3",
+  "description": "Clientside main controller for infrastructure frontend",
   "private": false,
+  "license": "MIT",
+  "repository": "git://github.com/shstefanov/infrastructure-appcontroller-ractive",
   "author": {
     "name": "Stefan Stefanov",
     "email": "s.h.stefanov@mail.bg"
