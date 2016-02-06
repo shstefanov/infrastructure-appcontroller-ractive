@@ -1,5 +1,5 @@
 var _          = require("underscore");
-var Ractive    = require("ractive/ractive.runtime.js" );
+var Ractive    = require("ractive" );
 
 var config     = require("config");
 Ractive.DEBUG  = config.debug;
