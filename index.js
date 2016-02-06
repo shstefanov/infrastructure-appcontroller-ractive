@@ -37,7 +37,7 @@ module.exports = Controller.extend("BaseRactiveAppController", {
       return;
     }
     var app_config = {};
-    if(this.config) app_config = helpers.resolve(options.config, this.config);
+    if(this.config && typeof this.config === "string") app_config = helpers.resolve(options.config, this.config);
 
     this.options  = options;
     this.config   = options.config;
