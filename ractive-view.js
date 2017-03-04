@@ -50,7 +50,7 @@ module.exports = Ractive.extend({
     var result = {};
     for(var key in obj) {
       var target = obj[key];
-      if(target.indexOf("*")){
+      if(target.indexOf("*") > -1){
         var parts = target.split(/[.\[]\*[.\]]/);
         var targetObj = this.get(parts[0]);
         if(!target[1]){
